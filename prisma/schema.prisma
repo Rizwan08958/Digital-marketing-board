@@ -1,0 +1,181 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum CompanyStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum BillboardStatus {
+  ONLINE
+  OFFLINE
+  MAINTENANCE
+}
+
+enum AdStatus {
+  DRAFT
+  ACTIVE
+  PAUSED
+  EXPIRED
+  DISABLED
+}
+
+enum CouponStatus {
+  ACTIVE
+  REDEEMED
+  EXPIRED
+  CANCELLED
+}
+
+model Admin {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  role         String   @default("ADMIN")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Company {
+  id            String          @id @default(cuid())
+  name          String
+  contactPerson String
+  email         String
+  phone         String
+  shopAddress   String
+  status        CompanyStatus   @default(ACTIVE)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  
+  advertisements Advertisement[]
+}
+
+model Billboard {
+  id          String          @id @default(cuid())
+  code        String          @unique
+  name        String
+  location    String
+  description String?
+  status      BillboardStatus @default(ONLINE)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  advertisements Advertisement[]
+}
+
+model Advertisement {
+  id                  String       @id @default(cuid())
+  name                String
+  offerTitle          String
+  discountDescription String
+  couponLimit         Int?
+  startDate           DateTime
+  endDate             DateTime
+  status              AdStatus     @default(ACTIVE)
+  createdAt           DateTime     @default(now())
+  updatedAt           DateTime     @updatedAt
+
+  companyId           String
+  company             Company      @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  billboardId         String
+  billboard           Billboard    @relation(fields: [billboardId], references: [id], onDelete: Cascade)
+
+  campaign            Campaign?
+
+  @@index([companyId])
+  @@index([billboardId])
+  @@index([status])
+}
+
+model Campaign {
+  id              String         @id @default(cuid())
+  campaignCode    String         @unique
+  qrUrl           String
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  advertisementId String         @unique
+  advertisement   Advertisement  @relation(fields: [advertisementId], references: [id], onDelete: Cascade)
+
+  scans           QRScan[]
+  coupons         Coupon[]
+  verifications   EmailVerification[]
+}
+
+model QRScan {
+  id         String   @id @default(cuid())
+  ipHash     String?
+  userAgent  String?
+  scannedAt  DateTime @default(now())
+
+  campaignId String
+  campaign   Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+
+  @@index([campaignId])
+  @@index([scannedAt])
+}
+
+model Customer {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  coupons   Coupon[]
+}
+
+model EmailVerification {
+  id         String    @id @default(cuid())
+  email      String
+  otpCode    String
+  token      String    @unique
+  expiresAt  DateTime
+  verifiedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  campaignId String
+  campaign   Campaign  @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+
+  @@index([email, campaignId])
+  @@index([token])
+}
+
+model Coupon {
+  id         String        @id @default(cuid())
+  couponCode String        @unique
+  status     CouponStatus  @default(ACTIVE)
+  expiresAt  DateTime
+  claimedAt  DateTime      @default(now())
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+
+  campaignId String
+  campaign   Campaign      @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+
+  customerId String
+  customer   Customer      @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  redemption CouponRedemption?
+
+  @@unique([campaignId, customerId])
+  @@index([couponCode])
+  @@index([status])
+}
+
+model CouponRedemption {
+  id                   String   @id @default(cuid())
+  redeemedAt           DateTime @default(now())
+  shopStaffIdentifier  String?
+  notes                String?
+
+  couponId             String   @unique
+  coupon               Coupon   @relation(fields: [couponId], references: [id], onDelete: Cascade)
+}
