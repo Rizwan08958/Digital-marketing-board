@@ -109,9 +109,12 @@ export default function AdvertisementsPage() {
   }, []);
 
   const handleOpenCreate = () => {
+    const defaultCompany = companies[0]?.id || "";
+    const defaultBillboard = billboards[0]?.id || "";
+
     setFormData({
-      companyId: companies[0]?.id || "",
-      billboardId: billboards[0]?.id || "",
+      companyId: defaultCompany,
+      billboardId: defaultBillboard,
       name: "",
       offerTitle: "",
       discountDescription: "",
@@ -129,11 +132,33 @@ export default function AdvertisementsPage() {
     setSaving(true);
     setError("");
 
+    // Ensure company and billboard IDs are selected
+    const cId = formData.companyId || companies[0]?.id;
+    const bId = formData.billboardId || billboards[0]?.id;
+
+    if (!cId) {
+      setError("Please select or create an Advertiser Company first.");
+      setSaving(false);
+      return;
+    }
+
+    if (!bId) {
+      setError("Please select or create a Billboard first.");
+      setSaving(false);
+      return;
+    }
+
+    const payload = {
+      ...formData,
+      companyId: cId,
+      billboardId: bId,
+    };
+
     try {
       const res = await fetch("/api/advertisements", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(payload),
       });
 
       const data = await res.json();
