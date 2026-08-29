@@ -2,13 +2,13 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { QrCode, Lock, Mail, ArrowRight, ShieldCheck, AlertCircle, Loader2 } from "lucide-react";
+import { QrCode, Lock, User, ArrowRight, ShieldCheck, AlertCircle, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function AdminLoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState("admin@isquare.com");
-  const [password, setPassword] = useState("admin123");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -21,12 +21,12 @@ export default function AdminLoginPage() {
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ username, password }),
       });
 
       const data = await res.json();
       if (!res.ok || !data.success) {
-        setError(data.error || "Invalid email or password");
+        setError(data.error || "Invalid username or password");
         setLoading(false);
         return;
       }
@@ -59,7 +59,7 @@ export default function AdminLoginPage() {
             iSquare <span className="text-cyan-400 font-light">Bill Boards</span>
           </h1>
           <p className="text-xs text-slate-400 mt-1.5 flex items-center gap-1">
-            <ShieldCheck className="w-4 h-4 text-cyan-400" /> Digital Ad QR Platform Admin
+            <ShieldCheck className="w-4 h-4 text-cyan-400" /> Admin Portal Login
           </p>
         </div>
 
@@ -76,15 +76,15 @@ export default function AdminLoginPage() {
 
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1.5">Email Address</label>
+            <label className="block text-xs font-semibold text-slate-300 mb-1.5">Username / Email</label>
             <div className="relative">
-              <Mail className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <User className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
-                type="email"
+                type="text"
                 required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@isquare.com"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="Enter admin username"
                 className="w-full pl-10 pr-4 py-2.5 bg-slate-950/70 border border-slate-800 rounded-xl text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-cyan-500/30 focus:border-cyan-500 transition-all"
               />
             </div>
@@ -99,7 +99,7 @@ export default function AdminLoginPage() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
+                placeholder="Enter admin password"
                 className="w-full pl-10 pr-4 py-2.5 bg-slate-950/70 border border-slate-800 rounded-xl text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-cyan-500/30 focus:border-cyan-500 transition-all"
               />
             </div>
@@ -118,24 +118,15 @@ export default function AdminLoginPage() {
                 </>
               ) : (
                 <>
-                  <span>Sign In to Dashboard</span>
+                  <span>Sign In</span>
                   <ArrowRight className="w-4 h-4" />
                 </>
               )}
             </button>
           </div>
         </form>
-
-        {/* Demo Helper Box */}
-        <div className="mt-8 p-3.5 bg-slate-950/60 rounded-xl border border-slate-800/80 text-center">
-          <p className="text-[11px] text-slate-400 font-medium">Default Demo Admin Credentials:</p>
-          <div className="mt-1 flex items-center justify-center gap-4 text-xs font-mono text-cyan-400">
-            <span>admin@isquare.com</span>
-            <span>/</span>
-            <span>admin123</span>
-          </div>
-        </div>
       </motion.div>
     </div>
   );
 }
+

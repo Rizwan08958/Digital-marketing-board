@@ -32,8 +32,8 @@ export default function AdminHeader({ adminEmail, adminName }: AdminHeaderProps)
             <User className="w-4 h-4" />
           </div>
           <div className="text-left">
-            <p className="text-xs font-semibold text-slate-800 leading-none">{adminName || "Administrator"}</p>
-            <p className="text-[11px] text-slate-500 leading-tight mt-0.5">{adminEmail || "admin@isquare.com"}</p>
+            <p className="text-xs font-semibold text-slate-800 leading-none">{adminName || "Admin"}</p>
+            <p className="text-[11px] text-slate-500 leading-tight mt-0.5">{adminEmail || "Portal Administrator"}</p>
           </div>
         </div>
       </div>

@@ -33,17 +33,10 @@ export default function HomePage() {
           <div className="flex items-center gap-3">
             <Link
               href="/shop/verify"
-              className="hidden sm:flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-slate-300 hover:text-white bg-slate-900 border border-slate-700/80 rounded-xl transition-colors"
+              className="flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-slate-300 hover:text-white bg-slate-900 border border-slate-700/80 rounded-xl transition-colors"
             >
               <ScanLine className="w-4 h-4 text-cyan-400" />
               <span>Shop Staff POS</span>
-            </Link>
-            <Link
-              href="/admin/login"
-              className="px-4 py-2 text-xs font-bold text-white bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 rounded-xl shadow-lg shadow-cyan-500/20 transition-all flex items-center gap-1.5"
-            >
-              <ShieldCheck className="w-4 h-4" />
-              <span>Admin Portal</span>
             </Link>
           </div>
         </div>
@@ -105,23 +98,15 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Quick Launch Buttons */}
+        {/* Action Button */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6">
           <Link
-            href="/c/CAMP-001"
-            className="w-full sm:w-auto px-6 py-3.5 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white font-bold rounded-2xl text-sm shadow-xl shadow-cyan-500/25 flex items-center justify-center gap-2 transition-all"
+            href="/shop/verify"
+            className="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white font-bold rounded-2xl text-sm shadow-xl shadow-cyan-500/25 flex items-center justify-center gap-2 transition-all"
           >
-            <QrCode className="w-4 h-4" />
-            <span>Test Customer Scan Flow (/c/CAMP-001)</span>
+            <ScanLine className="w-4 h-4" />
+            <span>Open Shop Staff POS Scanner</span>
             <ArrowRight className="w-4 h-4" />
-          </Link>
-
-          <Link
-            href="/admin/login"
-            className="w-full sm:w-auto px-6 py-3.5 bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700 font-bold rounded-2xl text-sm transition-colors flex items-center justify-center gap-2"
-          >
-            <ShieldCheck className="w-4 h-4 text-cyan-400" />
-            <span>Open Admin Dashboard</span>
           </Link>
         </div>
       </main>
