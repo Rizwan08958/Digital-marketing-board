@@ -342,12 +342,20 @@ export default function CustomerCampaignPage() {
                       Change Email
                     </button>
                   </div>
-                  <p className="text-[11px] text-slate-400 mb-2">Code sent to: {email}</p>
-
-                  {/* Dev Helper Hint */}
+                  {/* OTP Code Display Box */}
                   {devOtpHint && (
-                    <div className="p-2 mb-2 bg-cyan-950/80 border border-cyan-700/60 rounded-lg text-[11px] text-cyan-300 text-center">
-                      Dev OTP code: <span className="font-mono font-bold text-white text-sm">{devOtpHint}</span>
+                    <div className="p-3 mb-3 bg-emerald-950/80 border border-emerald-500/50 rounded-2xl text-emerald-200 text-center shadow-lg">
+                      <p className="text-[11px] font-medium text-emerald-300">Your Verification Code:</p>
+                      <div className="text-2xl font-black font-mono tracking-widest text-amber-400 mt-0.5">
+                        {devOtpHint}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setOtpCode(devOtpHint)}
+                        className="mt-1.5 px-3 py-1 bg-emerald-700/60 hover:bg-emerald-600/60 text-white rounded-lg text-[10px] font-bold transition-all inline-flex items-center gap-1"
+                      >
+                        <span>Click to Auto-Fill Code</span>
+                      </button>
                     </div>
                   )}
 

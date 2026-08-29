@@ -95,12 +95,16 @@ export async function POST(req: NextRequest) {
       companyName: ad.company.name,
     });
 
+    const hasRealEmail = Boolean(process.env.RESEND_API_KEY && process.env.RESEND_API_KEY.trim() !== "");
+
     return NextResponse.json({
       success: true,
-      message: "Verification code sent to your email",
+      message: hasRealEmail
+        ? "Verification code sent to your email"
+        : "Verification code generated! Enter the code below to claim your coupon.",
       expiresInMinutes: 15,
-      // For instant dev testing simplicity, we also return the OTP in response headers/body if in dev
-      ...(process.env.NODE_ENV !== "production" && { devOtp: otpCode }),
+      // If Resend API key is not configured, show code directly on UI for instant testing
+      ...(!hasRealEmail && { devOtp: otpCode }),
     });
   } catch (error) {
     console.error("Email verification request error:", error);
