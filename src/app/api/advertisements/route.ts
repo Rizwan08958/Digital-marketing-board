@@ -130,8 +130,21 @@ export async function POST(req: NextRequest) {
       campaignCode = generateCampaignCode(nextIndex);
     }
 
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-    const qrUrl = `${appUrl}/c/${campaignCode}`;
+    // Determine best base URL: from request origin/headers or NEXT_PUBLIC_APP_URL
+    const reqOrigin = req.headers.get("origin") || req.headers.get("referer");
+    let baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    if (reqOrigin) {
+      try {
+        const u = new URL(reqOrigin);
+        baseUrl = `${u.protocol}//${u.host}`;
+      } catch {}
+    } else {
+      const host = req.headers.get("host");
+      if (host) {
+        baseUrl = `http://${host}`;
+      }
+    }
+    const qrUrl = `${baseUrl}/c/${campaignCode}`;
 
     // Create Advertisement & 1:1 Campaign transactionally
     const ad = await prisma.advertisement.create({

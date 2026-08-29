@@ -30,9 +30,24 @@ export default function QRCodeModal({
   const [qrDataUrl, setQrDataUrl] = useState<string>("");
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
+  // Effective QR URL for phone scanning
+  const [effectiveUrl, setEffectiveUrl] = useState(qrUrl);
+
   useEffect(() => {
     if (isOpen && qrUrl) {
-      QRCode.toDataURL(qrUrl, {
+      let resolvedUrl = qrUrl;
+      // If current browser is using local IP or non-localhost, update qr code URL dynamically
+      if (typeof window !== "undefined") {
+        try {
+          const currentOrigin = window.location.origin;
+          if (resolvedUrl.includes("localhost") && !currentOrigin.includes("localhost")) {
+            resolvedUrl = resolvedUrl.replace(/http:\/\/localhost:\d+/, currentOrigin);
+          }
+        } catch {}
+      }
+      setEffectiveUrl(resolvedUrl);
+
+      QRCode.toDataURL(resolvedUrl, {
         width: 600,
         margin: 2,
         color: {
@@ -165,7 +180,7 @@ export default function QRCodeModal({
 
             {/* Target URL */}
             <div className="flex items-center gap-2 bg-slate-50 p-2.5 rounded-lg border border-slate-200 text-left mb-6">
-              <span className="text-xs text-slate-500 font-mono flex-1 truncate">{qrUrl}</span>
+              <span className="text-xs text-slate-500 font-mono flex-1 truncate">{effectiveUrl}</span>
               <button
                 onClick={handleCopy}
                 className="flex items-center gap-1 text-xs font-semibold text-cyan-700 hover:text-cyan-800 px-2 py-1 bg-cyan-100/60 rounded hover:bg-cyan-100 transition-colors"
@@ -174,7 +189,7 @@ export default function QRCodeModal({
                 {copied ? "Copied" : "Copy"}
               </button>
               <a
-                href={qrUrl}
+                href={effectiveUrl}
                 target="_blank"
                 rel="noreferrer"
                 className="p-1 text-slate-400 hover:text-slate-700"
